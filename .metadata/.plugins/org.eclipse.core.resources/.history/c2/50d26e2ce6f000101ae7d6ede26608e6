@@ -1,0 +1,19 @@
+package polymorphism;
+
+public class LgTV {
+	public void turnOn() {
+		
+	}
+	
+	public void turnOff() {
+		
+	}
+	
+	public void SoundUp() {
+		
+	}
+	
+	public void SoundDown() {
+		
+	}
+}

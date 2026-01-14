@@ -1,0 +1,19 @@
+package polymorphism;
+
+public class SamsungTV {
+	public void powerOn() {
+		
+	}
+	
+	public void powerOff() {
+		
+	}
+	
+	public void volumeUp() {
+		
+	}
+	
+	public void volumeDown() {
+		
+	}
+}
