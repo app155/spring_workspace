@@ -1,25 +1,35 @@
 package polymorphism;
 
 public class SamsungTV implements TV {
-	private SonySpeaker speaker;
+	private Speaker speaker;
 	private int price;
 	
 	public SamsungTV() {
 		System.out.println("=> SamsungTV(1) 객체 생성");
 	}
-		
-	public SamsungTV(SonySpeaker speaker) {
+	
+	public void setSpeaker(Speaker speaker) {
+		System.out.println("=> setSpeaker() 호출");
+		this.speaker = speaker;
+	}
+
+	public void setPrice(int price) {
+		System.out.println("=> setPrice() 호출");
+		this.price = price;
+	}
+
+	/*
+	public SamsungTV(Speaker speaker) {
 		System.out.println("=> SamsungTV(2) 객체 생성");
 		this.speaker = speaker;
 	}
 	
-	public SamsungTV(SonySpeaker speaker, int price) {
+	public SamsungTV(Speaker speaker, int price) {
 		System.out.println("=> SamsungTV(3) 객체 생성");
 		this.speaker = speaker;
 		this.price = price;
 	}
 
-	/*
 	public SamsungTV(SonySpeaker speaker) {
 		System.out.println("=> SamsungTV(2) 객체 생성");
 		this.speaker = speaker;

@@ -1,15 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+	  
+	<context:component-scan base-package="polymorphism"></context:component-scan>
+	<bean class="polymorphism.SonySpeaker"></bean>
+	
+	<!-- DataSource 설정 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@localhost:1521:orcl" />
+		<property name="username" value="scott" />
+		<property name="password" value="tiger" />
+	</bean>
 	<!-- 
 	<bean id="tv" class="polymorphism.SamsungTV" />
 	<import resource="a.xml"/>
 	 -->
-	 
-	 <bean id="tv" class="polymorphism.SamsungTV" lazy-init="true" scope="singleton">
-	 	<constructor-arg index="0" ref="sony"></constructor-arg>
-	 	<constructor-arg index="1" value="2700000"></constructor-arg>
+	<!--  
+	 <bean id="tv" class="polymorphism.SamsungTV" p:speaker-ref="sony" p:price="2700000">
+		
+	 	ref: 객체를 인자로 넘길 떄
+	 	<property name="speaker" ref="apple"></property>
+	 	value: 기본 자료형을 인자로 넘길 때
+	 	<property name="price" value="2700000"></property>
+	 	
 	 </bean>
 	 <bean id="sony" class="polymorphism.SonySpeaker"></bean>
+	 <bean id="apple" class="polymorphism.AppleSpeaker"></bean>
+	  -->
+	  <!-- 
+	  <bean id="collectionBean" class="com.globalin.ioc.injection.CollectionBean">
+	  	<property name="addressList">
+	  		<props>
+	  			<prop key="가길동">서울시 강남구 역삼동</prop>
+	  			<prop key="나길동">서울시 영등포구 영등포동</prop>
+	  			<prop key="다길동">서울시 도봉구 도봉동</prop>
+	  			<prop key="라길동">서울시 강남구 강남동</prop>
+	  		</props>
+	  		-->
+	  		<!-- <map>
+	  			<entry>
+	  				<key><value>가길동</value></key>
+	  				<value>서울시 강남구 역삼동</value>
+	  			</entry>
+	  			<entry>
+	  				<key><value>나길동</value></key>
+	  				<value>서울시 영등포구 영등포동</value>
+	  			</entry>
+	  			<entry>
+	  				<key><value>다길동</value></key>
+	  				<value>서울시 도봉구 도봉동</value>
+	  			</entry>
+	  		</map> -->
+	  		<!-- <set value-type="java.lang.String">
+	  			<value>서울시 강남구 역삼동</value>
+	  			<value>서울시 영등포구 영등포동</value>
+	  		</set> -->
+	  		<!-- <list>
+	  			<value>서울시 강남구 역삼동</value>
+	  			<value>서울시 영등포구 영등포동</value>
+	  		</list> -->
+	  <!-- 	</property>
+	  </bean>
+	   -->
+	   
 </beans>

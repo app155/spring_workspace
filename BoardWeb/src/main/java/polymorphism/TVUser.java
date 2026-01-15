@@ -42,9 +42,6 @@ public class TVUser {
 		TV tv3 = tv2;
 		*/
 		
-		
-		
-		
 		/*
 		// SamsungTV tv = new SamsungTV();
 		// LgTV tv = new LgTV();
