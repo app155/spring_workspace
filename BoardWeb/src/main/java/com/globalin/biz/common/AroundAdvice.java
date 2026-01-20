@@ -10,13 +10,7 @@ import org.springframework.util.StopWatch;
 @Service
 @Aspect
 public class AroundAdvice {
-	@Pointcut("execution(* com.globalin.biz..*Impl.*(..))")
-	public void allPointcut() {	}
-
-	@Pointcut("execution(* com.globalin.biz..*Impl.get*(..))")
-	public void getPointcut() {	}
-	
-	@Around("allPointcut()")
+	@Around("PointcutCommon.allPointcut()")
 	public Object aroundLog(ProceedingJoinPoint pjp) throws Throwable {
 		//System.out.println("[BEFORE]: 비즈니스 메소드 수행 전 처리할 내용");
 		String method = pjp.getSignature().getName();

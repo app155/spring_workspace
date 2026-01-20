@@ -9,13 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Aspect
 public class BeforeAdvice {
-	@Pointcut("execution(* com.globalin.biz..*Impl.*(..))")
-	public void allPointcut() {	}
-
-	@Pointcut("execution(* com.globalin.biz..*Impl.get*(..))")
-	public void getPointcut() {	}
-	
-	@Before("allPointcut()")
+	@Before("PointcutCommon.allPointcut()")
 	public void beforeLog(JoinPoint jp) {
 		String method = jp.getSignature().getName();
 		Object[] args = jp.getArgs();
@@ -23,3 +17,4 @@ public class BeforeAdvice {
 		System.out.println("[사전 처리] " + method + "() 메소드 ARGS 정보: " + args[0].toString());
 	}
 }
+ 

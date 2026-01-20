@@ -14,6 +14,7 @@ public class BoardServiceClient {
 		BoardService boardService = (BoardService)factory.getBean("boardService");
 		
 		BoardVO vo = new BoardVO();
+		// vo.setSeq(100);
 		vo.setTitle("활빈당");
 		vo.setWriter("홍길동");
 		vo.setContent("나는 조선의 ............");

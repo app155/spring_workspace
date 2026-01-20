@@ -2,3 +2,13 @@
 1월 13, 2026 12:18:07.20 NEW SESSION
 1월 13, 2026 12:18:07.20 Created TensorFlow Lite XNNPACK delegate for CPU.
 1월 13, 2026 12:18:09.340 [10748:18452:0113/121809.340:ERROR:google_apis\gcm\engine\registration_request.cc:292] Registration response error message: DEPRECATED_ENDPOINT
+
+1월 20, 2026 12:38:20.564 NEW SESSION
+1월 20, 2026 12:38:20.564 Created TensorFlow Lite XNNPACK delegate for CPU.
+1월 20, 2026 12:38:23.696 [17376:2604:0120/123823.696:ERROR:google_apis\gcm\engine\registration_request.cc:292] Registration response error message: QUOTA_EXCEEDED
+1월 20, 2026 13:33:26.612 [17376:2604:0120/133326.611:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:483] ConnectionHandler failed with net error: -2
+1월 20, 2026 14:01:33.43 [17376:2604:0120/140133.037:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -7
+1월 20, 2026 14:01:41.941 [17376:2604:0120/140141.941:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 20, 2026 14:01:52.05 [17376:2604:0120/140152.005:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 20, 2026 14:01:54.651 [17376:2604:0120/140154.651:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 20, 2026 14:02:06.132 [17376:692:0120/140206.131:ERROR:components\device_event_log\device_event_log_impl.cc:198] [14:02:06.132] USB: usb_service_win.cc:105 SetupDiGetDeviceProperty({{A45C254E-DF1C-4EFD-8020-67D146A850E0}, 6}) failed: �슂�냼媛� �뾾�뒿�땲�떎. (0x490)

@@ -9,13 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Aspect
 public class AfterThrowingAdvice {
-	@Pointcut("execution(* com.globalin.biz..*Impl.*(..))")
-	public void allPointcut() {	}
-
-	@Pointcut("execution(* com.globalin.biz..*Impl.get*(..))")
-	public void getPointcut() {	}
-	
-	@AfterThrowing(pointcut = "allPointcut()", throwing = "exceptObj")
+	@AfterThrowing(pointcut = "PointcutCommon.allPointcut()", throwing = "exceptObj")
 	public void exceptionLog(JoinPoint jp, Exception exceptObj) {
 		String method = jp.getSignature().getName();
 		

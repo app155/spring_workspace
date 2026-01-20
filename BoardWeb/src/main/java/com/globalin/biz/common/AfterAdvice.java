@@ -8,13 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Aspect
 public class AfterAdvice {
-	@Pointcut("execution(* com.globalin.biz..*Impl.*(..))")
-	public void allPointcut() {	}
-
-	@Pointcut("execution(* com.globalin.biz..*Impl.get*(..))")
-	public void getPointcut() {	}
-	
-	@After("allPointcut()")
+	@After("PointcutCommon.allPointcut()")
 	public void finallyLog() {
 		System.out.println("[사후처리] 비즈니스 로직 수행 후 무조건 동작");
 	}
