@@ -14,7 +14,6 @@
 <fullyQualifiedTypeName name="com.globalin.biz.common.Log4jAdvice"/>
 <fullyQualifiedTypeName name="java.lang.IllegalArgumentException"/>
 <fullyQualifiedTypeName name="org.aspectj.lang.ProceedingJoinPoint"/>
-<fullyQualifiedTypeName name="com.globalin.biz.user.UserVO"/>
 <fullyQualifiedTypeName name="org.aspectj.lang.JoinPoint"/>
 <fullyQualifiedTypeName name="org.springframework.util.StopWatch"/>
 <fullyQualifiedTypeName name="org.aspectj.lang.annotation.Pointcut"/>
@@ -27,11 +26,24 @@
 <fullyQualifiedTypeName name="org.aspectj.lang.annotation.Aspect"/>
 <fullyQualifiedTypeName name="org.springframework.jdbc.core.support.JdbcDaoSupport"/>
 <fullyQualifiedTypeName name="javax.sql.DataSource"/>
-<fullyQualifiedTypeName name="com.globalin.biz.board.BoardVO"/>
-<fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="com.globalin.biz.board.impl.BoardRowMapper"/>
 <fullyQualifiedTypeName name="com.globalin.biz.board.impl.BoardDAOSpringJdbcOne"/>
 <fullyQualifiedTypeName name="org.springframework.stereotype.Repository"/>
 <fullyQualifiedTypeName name="org.springframework.jdbc.core.JdbcTemplate"/>
 <fullyQualifiedTypeName name="org.springframework.beans.factory.annotation.Autowired"/>
+<fullyQualifiedTypeName name="java.lang.String"/>
+<fullyQualifiedTypeName name="com.globalin.biz.user.UserVO"/>
+<fullyQualifiedTypeName name="com.globalin.biz.user.impl.UserDAO"/>
+<fullyQualifiedTypeName name="com.globalin.biz.board.BoardVO"/>
+<fullyQualifiedTypeName name="com.globalin.biz.board.impl.BoardDAO"/>
+<fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="javax.servlet.http.HttpSession"/>
+<fullyQualifiedTypeName name="javax.servlet.http.HttpServletRequest"/>
+<fullyQualifiedTypeName name="javax.servlet.http.HttpServletResponse"/>
+<fullyQualifiedTypeName name="java.util.Map"/>
+<fullyQualifiedTypeName name="java.util.HashMap"/>
+<fullyQualifiedTypeName name="com.globalin.view.user.LoginController"/>
+<fullyQualifiedTypeName name="org.springframework.web.servlet.HandlerMapping"/>
+<fullyQualifiedTypeName name="com.globalin.view.controller.DispatcherServlet"/>
+<fullyQualifiedTypeName name="com.globalin.view.controller.HandlerMapping"/>
 </qualifiedTypeNameHistroy>

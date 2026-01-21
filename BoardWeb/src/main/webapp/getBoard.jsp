@@ -4,15 +4,7 @@
 <%@ page import="com.globalin.biz.board.BoardVO"%>
 
 <%
-// 1. 사용자 정보 추출(검색)
-String seq = request.getParameter("seq");
-
-// 2. DB연동
-BoardVO vo = new BoardVO();
-vo.setSeq(Integer.parseInt(seq));
-BoardDAO boardDAO = new BoardDAO();
-
-BoardVO board = boardDAO.getBoard(vo);
+BoardVO board = (BoardVO)session.getAttribute("board");
 // 3. 응답 화면 구성
 %>
 <!DOCTYPE html>
@@ -24,10 +16,11 @@ BoardVO board = boardDAO.getBoard(vo);
 <body>
 	<div align="center">
 		<h1>글 상세보기</h1>
-		<a href="logout_proc.jsp">Logout</a>
+		<a href="logout.do">Logout</a>
 		<hr color="red">
 		
-		<form action="updateBoard_proc.jsp" method="post">
+		<form action="updateBoard.do" method="post">
+			<input type="hidden" name="seq" value="<%=board.getSeq() %>">
 			<table border="1" cellpadding="0" cellspacing="0">
 				<tr>
 					<td bgcolor="orange">제목</td>
@@ -59,9 +52,9 @@ BoardVO board = boardDAO.getBoard(vo);
 			</table>
 		</form>
 		<hr color="red">
-		<a href="insertBoard.jsp">글등록</a>&nbsp;&nbsp;&nbsp;
-		<a href="deleteBoard_proc.jsp">글삭제</a>&nbsp;&nbsp;&nbsp;
-		<a href="getBoardList.jsp">글목록</a>&nbsp;&nbsp;&nbsp;
+		<a href="insertBoard.do">글등록</a>&nbsp;&nbsp;&nbsp;
+		<a href="deleteBoard.do?seq=<%=board.getSeq() %>">글삭제</a>&nbsp;&nbsp;&nbsp;
+		<a href="getBoardList.do">글목록</a>&nbsp;&nbsp;&nbsp;
 	</div>
 </body>
 </html>

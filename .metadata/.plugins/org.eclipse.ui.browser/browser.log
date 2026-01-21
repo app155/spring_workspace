@@ -12,3 +12,67 @@
 1월 20, 2026 14:01:52.05 [17376:2604:0120/140152.005:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
 1월 20, 2026 14:01:54.651 [17376:2604:0120/140154.651:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
 1월 20, 2026 14:02:06.132 [17376:692:0120/140206.131:ERROR:components\device_event_log\device_event_log_impl.cc:198] [14:02:06.132] USB: usb_service_win.cc:105 SetupDiGetDeviceProperty({{A45C254E-DF1C-4EFD-8020-67D146A850E0}, 6}) failed: �슂�냼媛� �뾾�뒿�땲�떎. (0x490)
+
+1월 21, 2026 09:46:11.548 NEW SESSION
+1월 21, 2026 09:46:11.548 Created TensorFlow Lite XNNPACK delegate for CPU.
+1월 21, 2026 09:46:13.909 [7872:17480:0121/094613.909:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 09:46:13.911 [7872:17480:0121/094613.910:ERROR:google_apis\gcm\engine\registration_request.cc:275] Registration URL fetching failed.
+1월 21, 2026 09:46:41.111 [7872:17480:0121/094641.110:ERROR:google_apis\gcm\engine\registration_request.cc:275] Registration URL fetching failed.
+1월 21, 2026 09:46:43.373 [7872:17480:0121/094643.372:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 09:47:25.200 [7872:17480:0121/094725.199:ERROR:google_apis\gcm\engine\registration_request.cc:275] Registration URL fetching failed.
+1월 21, 2026 09:47:26.07 [7872:17480:0121/094726.006:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 09:49:05.392 [7872:17480:0121/094905.392:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 09:49:15.379 [7872:17480:0121/094915.378:ERROR:google_apis\gcm\engine\registration_request.cc:275] Registration URL fetching failed.
+1월 21, 2026 09:52:41.364 [7872:17480:0121/095241.363:ERROR:google_apis\gcm\engine\registration_request.cc:275] Registration URL fetching failed.
+1월 21, 2026 09:52:54.665 [7872:17480:0121/095254.664:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 09:58:40.919 [7872:17480:0121/095840.918:ERROR:google_apis\gcm\engine\registration_request.cc:275] Registration URL fetching failed.
+1월 21, 2026 10:00:19.872 [7872:17480:0121/100019.872:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 10:10:19.885 [7872:17480:0121/101019.885:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 10:20:19.912 [7872:17480:0121/102019.911:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 10:30:19.926 [7872:17480:0121/103019.925:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 10:33:38.124 [7872:17480:0121/103338.124:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 10:33:57.570 [7872:11304:0121/103357.570:ERROR:components\device_event_log\device_event_log_impl.cc:198] [10:33:57.571] USB: usb_service_win.cc:105 SetupDiGetDeviceProperty({{A45C254E-DF1C-4EFD-8020-67D146A850E0}, 6}) failed: �슂�냼媛� �뾾�뒿�땲�떎. (0x490)
+1월 21, 2026 10:33:59.303 [7872:17480:0121/103359.303:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 10:34:06.954 [7872:17480:0121/103406.954:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 10:34:20.105 [7872:11304:0121/103420.105:ERROR:components\device_event_log\device_event_log_impl.cc:198] [10:34:20.109] USB: usb_service_win.cc:105 SetupDiGetDeviceProperty({{A45C254E-DF1C-4EFD-8020-67D146A850E0}, 6}) failed: �슂�냼媛� �뾾�뒿�땲�떎. (0x490)
+1월 21, 2026 10:34:37.324 [7872:17480:0121/103437.324:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 10:34:55.331 [7872:17480:0121/103455.330:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 10:34:57.712 [7872:17480:0121/103457.711:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 10:35:17.733 [7872:11304:0121/103517.733:ERROR:components\device_event_log\device_event_log_impl.cc:198] [10:35:17.733] USB: usb_service_win.cc:105 SetupDiGetDeviceProperty({{A45C254E-DF1C-4EFD-8020-67D146A850E0}, 6}) failed: �슂�냼媛� �뾾�뒿�땲�떎. (0x490)
+1월 21, 2026 10:35:19.318 [7872:17480:0121/103519.317:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 10:35:27.253 [7872:17480:0121/103527.253:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 10:35:40.324 [7872:11304:0121/103540.323:ERROR:components\device_event_log\device_event_log_impl.cc:198] [10:35:40.318] USB: usb_service_win.cc:105 SetupDiGetDeviceProperty({{A45C254E-DF1C-4EFD-8020-67D146A850E0}, 6}) failed: �슂�냼媛� �뾾�뒿�땲�떎. (0x490)
+1월 21, 2026 10:35:57.836 [7872:17480:0121/103557.835:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 10:37:39.330 [7872:17480:0121/103739.330:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 10:40:19.941 [7872:17480:0121/104019.941:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 10:50:19.957 [7872:17480:0121/105019.957:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 11:00:19.975 [7872:17480:0121/110019.973:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 11:10:19.987 [7872:17480:0121/111019.986:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 11:20:19.999 [7872:17480:0121/112019.998:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 11:31:29.673 [7872:17480:0121/113129.673:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 11:31:46.810 [7872:17480:0121/113146.809:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 11:32:00.147 [7872:11304:0121/113200.147:ERROR:components\device_event_log\device_event_log_impl.cc:198] [11:32:00.147] USB: usb_service_win.cc:105 SetupDiGetDeviceProperty({{A45C254E-DF1C-4EFD-8020-67D146A850E0}, 6}) failed: �슂�냼媛� �뾾�뒿�땲�떎. (0x490)
+1월 21, 2026 11:32:17.823 [7872:17480:0121/113217.823:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 11:32:28.315 [7872:17480:0121/113228.314:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 11:32:38.90 [7872:17480:0121/113238.089:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 11:32:59.158 [7872:11304:0121/113259.157:ERROR:components\device_event_log\device_event_log_impl.cc:198] [11:32:59.157] USB: usb_service_win.cc:105 SetupDiGetDeviceProperty({{A45C254E-DF1C-4EFD-8020-67D146A850E0}, 6}) failed: �슂�냼媛� �뾾�뒿�땲�떎. (0x490)
+1월 21, 2026 11:33:00.818 [7872:17480:0121/113300.817:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 11:33:09.202 [7872:17480:0121/113309.201:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 11:33:22.666 [7872:11304:0121/113322.665:ERROR:components\device_event_log\device_event_log_impl.cc:198] [11:33:22.666] USB: usb_service_win.cc:105 SetupDiGetDeviceProperty({{A45C254E-DF1C-4EFD-8020-67D146A850E0}, 6}) failed: �슂�냼媛� �뾾�뒿�땲�떎. (0x490)
+1월 21, 2026 11:33:38.821 [7872:17480:0121/113338.821:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 11:35:20.328 [7872:17480:0121/113520.328:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 11:41:29.683 [7872:17480:0121/114129.683:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 11:51:29.686 [7872:17480:0121/115129.686:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 12:01:29.694 [7872:17480:0121/120129.693:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 12:11:29.697 [7872:17480:0121/121129.697:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 12:21:29.708 [7872:17480:0121/122129.708:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 12:31:29.720 [7872:17480:0121/123129.720:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 12:41:29.725 [7872:17480:0121/124129.725:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 12:51:29.752 [7872:17480:0121/125129.752:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 13:01:29.766 [7872:17480:0121/130129.765:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 13:11:29.780 [7872:17480:0121/131129.780:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 13:21:29.792 [7872:17480:0121/132129.792:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 13:31:29.797 [7872:17480:0121/133129.797:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 14:29:55.51 [7872:17480:0121/142955.049:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 14:29:57.242 [7872:17480:0121/142957.241:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
+1월 21, 2026 14:30:12.830 [7872:17480:0121/143012.828:ERROR:google_apis\gcm\engine\connection_factory_impl.cc:434] Failed to connect to MCS endpoint with error -105
