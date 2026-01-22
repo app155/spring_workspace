@@ -34,10 +34,6 @@
 <fullyQualifiedTypeName name="java.lang.String"/>
 <fullyQualifiedTypeName name="com.globalin.biz.user.UserVO"/>
 <fullyQualifiedTypeName name="com.globalin.biz.user.impl.UserDAO"/>
-<fullyQualifiedTypeName name="com.globalin.biz.board.BoardVO"/>
-<fullyQualifiedTypeName name="com.globalin.biz.board.impl.BoardDAO"/>
-<fullyQualifiedTypeName name="java.util.List"/>
-<fullyQualifiedTypeName name="javax.servlet.http.HttpSession"/>
 <fullyQualifiedTypeName name="javax.servlet.http.HttpServletRequest"/>
 <fullyQualifiedTypeName name="javax.servlet.http.HttpServletResponse"/>
 <fullyQualifiedTypeName name="java.util.Map"/>
@@ -46,4 +42,17 @@
 <fullyQualifiedTypeName name="org.springframework.web.servlet.HandlerMapping"/>
 <fullyQualifiedTypeName name="com.globalin.view.controller.DispatcherServlet"/>
 <fullyQualifiedTypeName name="com.globalin.view.controller.HandlerMapping"/>
+<fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="com.globalin.view.board.GetBoardListController"/>
+<fullyQualifiedTypeName name="com.globalin.view.board.GetBoardController"/>
+<fullyQualifiedTypeName name="com.globalin.view.board.InsertBoardController"/>
+<fullyQualifiedTypeName name="com.globalin.view.board.UpdateBoardController"/>
+<fullyQualifiedTypeName name="com.globalin.view.controller.Controller"/>
+<fullyQualifiedTypeName name="com.globalin.biz.board.BoardVO"/>
+<fullyQualifiedTypeName name="com.globalin.biz.board.impl.BoardDAO"/>
+<fullyQualifiedTypeName name="com.globalin.view.board.DeleteBoardController"/>
+<fullyQualifiedTypeName name="javax.servlet.http.HttpSession"/>
+<fullyQualifiedTypeName name="com.globalin.view.user.LogoutController"/>
+<fullyQualifiedTypeName name="org.springframework.web.servlet.mvc.Controller"/>
+<fullyQualifiedTypeName name="org.springframework.web.servlet.ModelAndView"/>
 </qualifiedTypeNameHistroy>
