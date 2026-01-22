@@ -3,16 +3,17 @@ package com.globalin.view.user;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
+
 import com.globalin.biz.user.UserVO;
 import com.globalin.biz.user.impl.UserDAO;
-import com.globalin.view.controller.Controller;
 
 public class LoginController implements Controller {
-
 	@Override
-	public String handlerRequest(HttpServletRequest request, HttpServletResponse response) {
+	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) {
 		System.out.println("로그인 처리");
-		
+
 		// 1. 사용자 입력정보 추출
 		String id = request.getParameter("id");
 		String password = request.getParameter("password");
@@ -27,12 +28,16 @@ public class LoginController implements Controller {
 		UserVO user = userDAO.getUser(vo);
 
 		// 3. 화면 내비게이션
+		ModelAndView mav = new ModelAndView();
+		
 		if (user != null) {
-			return "getBoardList.do";
+			mav.setViewName("getBoardList.do");
 		}
 		else {
-			return "login";	
+			mav.setViewName("login.jsp");
 		}
+		
+		return mav;
 	}
 
 }
