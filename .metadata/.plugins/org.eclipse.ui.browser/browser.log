@@ -85,3 +85,9 @@
 1월 22, 2026 10:01:44.351 [13516:1140:0122/100144.350:ERROR:google_apis\gcm\engine\registration_request.cc:292] Registration response error message: DEPRECATED_ENDPOINT
 1월 22, 2026 10:04:54.946 [13516:1140:0122/100454.946:ERROR:google_apis\gcm\engine\registration_request.cc:292] Registration response error message: DEPRECATED_ENDPOINT
 1월 22, 2026 10:10:51.53 [13516:1140:0122/101051.053:ERROR:google_apis\gcm\engine\registration_request.cc:292] Registration response error message: DEPRECATED_ENDPOINT
+
+1월 23, 2026 11:49:24.912 NEW SESSION
+1월 23, 2026 11:49:24.914 Created TensorFlow Lite XNNPACK delegate for CPU.
+1월 23, 2026 11:49:27.198 [3644:6392:0123/114927.198:ERROR:google_apis\gcm\engine\registration_request.cc:292] Registration response error message: DEPRECATED_ENDPOINT
+1월 23, 2026 11:49:54.648 [3644:6392:0123/114954.648:ERROR:google_apis\gcm\engine\registration_request.cc:292] Registration response error message: QUOTA_EXCEEDED
+1월 23, 2026 12:24:44.153 [3644:9412:0123/122444.153:ERROR:mojo\public\cpp\bindings\lib\interface_endpoint_client.cc:732] Message 1 rejected by interface blink.mojom.WidgetHost

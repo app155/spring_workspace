@@ -33,7 +33,7 @@
 			</table>
 		</form>
 		<hr color="red">
-		<a href="getBoardList.jsp">글목록</a>
+		<a href="getBoardList.do">글목록</a>
 	</div>
 </body>
 </html>
