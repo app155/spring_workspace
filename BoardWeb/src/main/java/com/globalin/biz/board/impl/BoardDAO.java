@@ -22,6 +22,10 @@ public class BoardDAO {
 	private final String BOARD_GET = "select * from board where seq = ?";
 	private final String BOARD_LIST = "select * from board order by seq desc"; 
 	
+	// DB에서 검색
+	private final String BOARD_LIST_T = "select * from board where title like '%'||?||'%' order by seq desc";
+	private final String BOARD_LIST_C = "select * from board where content like '%'||?||'%' order by seq desc";
+	
 	// CRUD 기능의 메소드 구현
 	public void insertBoard(BoardVO vo) {
 		System.out.println("=> JDBC insertBoard()");
@@ -121,8 +125,18 @@ public class BoardDAO {
 		
 		try {
 			con = JDBCUtil.getConnection();
-			pstmt = con.prepareStatement(BOARD_LIST);
 			
+			if (vo.getSearchCondition().equals("TITLE")) {
+				pstmt = con.prepareStatement(BOARD_LIST_T);
+			}
+			else if (vo.getSearchCondition().equals("CONTENT")) {
+				pstmt = con.prepareStatement(BOARD_LIST_C);
+			}
+			else {
+				pstmt = con.prepareStatement(BOARD_LIST);
+			}
+			
+			pstmt.setString(1, vo.getSearchKeyword());
 			rs = pstmt.executeQuery();
 			
 			while (rs.next()) {

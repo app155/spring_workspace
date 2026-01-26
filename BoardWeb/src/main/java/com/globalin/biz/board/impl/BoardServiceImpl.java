@@ -13,9 +13,9 @@ import com.globalin.biz.common.LogAdvice;
 @Service("boardService")
 public class BoardServiceImpl implements BoardService {
 	@Autowired
-	private BoardDAOSpringJdbcTwo boardDAO;
-	// private BoardDAOSpringJdbcOne boardDAO;
-	// private BoardDAO boardDAO;
+	// private BoardDAOSpringJdbcTwo boardDAO;
+	//private BoardDAOSpringJdbcOne boardDAO;
+	 private BoardDAO boardDAO;
 	// private LogAdvice log;
 	// private Log4jAdvice log; 
 	

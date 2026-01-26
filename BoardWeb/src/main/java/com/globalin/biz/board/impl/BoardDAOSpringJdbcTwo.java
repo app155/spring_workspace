@@ -20,6 +20,10 @@ public class BoardDAOSpringJdbcTwo {
 	private final String BOARD_GET = "select * from board where seq = ?";
 	private final String BOARD_LIST = "select * from board order by seq desc";
 	
+	// DB에서 검색
+	private final String BOARD_LIST_T = "select * from board where title like '%'||?||'%' order by seq desc";
+	private final String BOARD_LIST_C = "select * from board where content like '%'||?||'%' order by seq desc";
+	
 	public void insertBoard(BoardVO vo) {
 		System.out.println("=> Spring JDBC two: insertBoard()");
 		jdbcTemplate.update(BOARD_INSERT, vo.getTitle(), vo.getWriter(), vo.getContent());
@@ -46,6 +50,17 @@ public class BoardDAOSpringJdbcTwo {
 	public List<BoardVO> getBoardList(BoardVO vo) {
 		System.out.println("=> Spring JDBC two: getBoardList()");
 		
-		return jdbcTemplate.query(BOARD_LIST, new BoardRowMapper());
+		Object[] args = { vo.getSearchKeyword() };
+		
+		if (vo.getSearchCondition().equals("TITLE")) {
+			return jdbcTemplate.query(BOARD_LIST_T, args, new BoardRowMapper());
+		}
+		else if (vo.getSearchCondition().equals("CONTENT")) {
+			return jdbcTemplate.query(BOARD_LIST_C, args, new BoardRowMapper());
+		}
+		
+		return null;
+		
+		// return jdbcTemplate.query(BOARD_LIST, new BoardRowMapper());
 	}
 }

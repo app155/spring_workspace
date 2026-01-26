@@ -25,7 +25,7 @@
 					<td align="left">${board.writer }</td>
 				</tr>
 				<tr>
-					<td bgcolor="orange">작성자</td>
+					<td bgcolor="orange">내용</td>
 					<td align="left">
 						<textarea rows="10" cols="40" name="content">${board.content }</textarea>
 					</td>
