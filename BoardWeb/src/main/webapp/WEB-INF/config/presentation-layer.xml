@@ -16,7 +16,9 @@
 		<property name="maxUploadSize" value="100000"></property>
 	</bean>
 	
+	
 	<!-- 예외처리 설정(xml) -->
+	<!-- 
 	<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
 		<property name="exceptionMappings">
 			<props>
@@ -30,5 +32,6 @@
 		</property>
 		<property name="defaultErrorView" value="common/error.jsp"></property>
 	</bean>
-	
+	 -->
+	 
 </beans>
