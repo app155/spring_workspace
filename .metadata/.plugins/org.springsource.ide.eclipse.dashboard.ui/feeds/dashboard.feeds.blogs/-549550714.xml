@@ -1,4 +1,246 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Spring]]></title><description><![CDATA[Level up your Java code and explore what Spring can do for you.]]></description><link>https://spring.io</link><generator>GatsbyJS</generator><lastBuildDate>Tue, 27 Jan 2026 00:44:09 GMT</lastBuildDate><item><title><![CDATA[Spring AI 2.0.0-M2 Available Now]]></title><link>https://spring.io/blog/2026/01/23/spring-ai-2-0-0-M2-available-now</link><guid isPermaLink="true">https://spring.io/blog/2026/01/23/spring-ai-2-0-0-M2-available-now</guid><dc:creator><![CDATA[markpollack]]></dc:creator><pubDate>Fri, 23 Jan 2026 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;On behalf of the Spring AI team, I&apos;m happy to announce that Spring AI &lt;code&gt;2.0.0-M2&lt;/code&gt; is now available from Maven Central.&lt;/p&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Spring]]></title><description><![CDATA[Level up your Java code and explore what Spring can do for you.]]></description><link>https://spring.io</link><generator>GatsbyJS</generator><lastBuildDate>Wed, 28 Jan 2026 00:42:01 GMT</lastBuildDate><item><title><![CDATA[Spring AI Agentic Patterns (Part 4): Subagent Orchestration]]></title><link>https://spring.io/blog/2026/01/27/spring-ai-agentic-patterns-4-task-subagents</link><guid isPermaLink="true">https://spring.io/blog/2026/01/27/spring-ai-agentic-patterns-4-task-subagents</guid><dc:creator><![CDATA[tzolov]]></dc:creator><pubDate>Tue, 27 Jan 2026 00:00:00 GMT</pubDate><content:encoded>&lt;img style=&quot;display: block; margin: auto;&quot; align=&quot;right&quot; src=&quot;https://raw.githubusercontent.com/spring-io/spring-io-static/refs/heads/main/blog/tzolov/20260127/subagents.png&quot; width=&quot;200&quot;&gt;
+&lt;p&gt;Instead of one generalist agent doing everything, delegate to specialized agents. This keeps context windows focused?preventing the clutter that degrades performance.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/spring-ai-community/spring-ai-agent-utils/blob/main/spring-ai-agent-utils/docs/TaskTools.md&quot;&gt;Task tool&lt;/a&gt;, part of the &lt;a href=&quot;https://github.com/spring-ai-community/spring-ai-agent-utils&quot;&gt;spring-ai-agent-utils&lt;/a&gt; toolkit, is a &lt;strong&gt;portable, model-agnostic&lt;/strong&gt; Spring AI implementation inspired by &lt;a href=&quot;https://platform.claude.com/docs/en/agent-sdk/subagents&quot;&gt;Claude Code&apos;s subagents&lt;/a&gt;. It enables hierarchical agent architectures where specialized subagents handle focused tasks in &lt;strong&gt;dedicated context windows&lt;/strong&gt;, returning only essential results to the parent. Beyond Claude&apos;s markdown-based format, the architecture is extensible?supporting &lt;a href=&quot;https://google.github.io/A2A/&quot;&gt;A2A&lt;/a&gt; and other agentic protocols for heterogeneous agent orchestration (more information will be provided in Part 5).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;This is Part 4 of our Spring AI Agentic Patterns series.&lt;/strong&gt; We&apos;ve covered &lt;a href=&quot;https://spring.io/blog/2026/01/13/spring-ai-generic-agent-skills&quot;&gt;Agent Skills&lt;/a&gt;, &lt;a href=&quot;https://spring.io/blog/2026/01/16/spring-ai-ask-user-question-tool&quot;&gt;AskUserQuestionTool&lt;/a&gt;, and &lt;a href=&quot;https://spring.io/blog/2026/01/20/spring-ai-agentic-patterns-3-todowrite/&quot;&gt;TodoWriteTool&lt;/a&gt;. Now we explore hierarchical subagents.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Ready to dive in?&lt;/strong&gt; Skip to &lt;a href=&quot;#getting-started&quot;&gt;Getting Started&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&quot;how-it-works&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#how-it-works&quot; aria-label=&quot;how it works permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;How It Works&lt;/h2&gt;
+&lt;p&gt;The main agent delegates tasks to specialized subagents through the Task tool, with each subagent operating in its own isolated context window. The subagent architecture consists of three key components:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;1. Main Agent (Orchestrator)&lt;/strong&gt;
+The primary agent that interacts with users. Its LLM has access to the &lt;code&gt;Task&lt;/code&gt; tool and knows about available subagents through the &lt;strong&gt;Agent Registry&lt;/strong&gt;?a catalog of subagent names and descriptions populated at startup. The main agent automatically decides when to delegate based on each subagent&apos;s &lt;code&gt;description&lt;/code&gt; field.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;2. Agent Configuration Files&lt;/strong&gt;
+Subagents are defined as Markdown files (e.g., &lt;code&gt;agent-x.md&lt;/code&gt;, &lt;code&gt;agent-y.md&lt;/code&gt;) in an &lt;code&gt;agents/&lt;/code&gt; folder. Each file specifies the subagent&apos;s name, description, allowed tools, preferred model, and system prompt. These configurations populate both the Agent Registry and Task tool at startup.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;3. Subagents&lt;/strong&gt;
+Separate agent instances that execute in isolated context windows. Each subagent can use a &lt;strong&gt;different LLM&lt;/strong&gt; (LLM-X, LLM-Y, LLM-Z) with its own system prompt, tools, and skills?enabling multi-model routing based on task complexity.&lt;/p&gt;
+&lt;p&gt;The diagram below illustrates the execution flow:&lt;/p&gt;
+&lt;img style=&quot;display: block; margin: auto;&quot; src=&quot;https://raw.githubusercontent.com/spring-io/spring-io-static/refs/heads/main/blog/tzolov/20260127/sub-agents-architecture.png&quot; width=&quot;500&quot;&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Loading:&lt;/strong&gt; At startup, the Task tool loads the configured subagent references, resolves their names and descriptions, and populates the agent registry.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;User&lt;/strong&gt; sends a complex question to the main agent&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Main agent&apos;s LLM&lt;/strong&gt; evaluates the request and checks available subagents in the registry&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;LLM decides&lt;/strong&gt; to delegate by invoking the &lt;code&gt;Task&lt;/code&gt; tool with the subagent name and task description&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Task tool&lt;/strong&gt; spawns the appropriate subagent based on the agent configuration&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Subagent&lt;/strong&gt; works autonomously in its dedicated context window&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Results&lt;/strong&gt; flow back to the main agent (only essential findings, not intermediate steps)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Main agent&lt;/strong&gt; synthesizes and returns the final answer to the user&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Each subagent operates with:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Dedicated context window&lt;/strong&gt; - Isolated from the main conversation, preventing clutter&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Custom system prompt&lt;/strong&gt; - Tailored expertise for specific domains&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Configurable tool access&lt;/strong&gt; - Restricted to only necessary capabilities&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Multi-model routing&lt;/strong&gt; - Route simple tasks to cheaper models, complex analysis to capable ones&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Parallel execution&lt;/strong&gt; - Launch multiple subagents concurrently&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Background tasks&lt;/strong&gt; - Long-running operations execute asynchronously&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&quot;built-in-subagents&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#built-in-subagents&quot; aria-label=&quot;built in subagents permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Built-in Subagents&lt;/h3&gt;
+&lt;p&gt;Spring AI Agent Utils provides four built-in subagents, automatically registered when &lt;code&gt;TaskTool&lt;/code&gt; is configured:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&quot;left&quot;&gt;Subagent&lt;/th&gt;
+&lt;th align=&quot;left&quot;&gt;Purpose&lt;/th&gt;
+&lt;th align=&quot;left&quot;&gt;Tools&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;strong&gt;Explore&lt;/strong&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;Fast, read-only codebase exploration?find files, search code, analyze contents&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;Read, Grep, Glob&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;strong&gt;General-Purpose&lt;/strong&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;Multi-step research and execution with full read/write access&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;All tools&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;strong&gt;Plan&lt;/strong&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;Software architect for designing implementation strategies and identifying trade-offs&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;Read-only + search&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;strong&gt;Bash&lt;/strong&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;Command execution specialist for git operations, builds, and terminal tasks&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;Bash only&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;See the &lt;a href=&quot;https://github.com/spring-ai-community/spring-ai-agent-utils/blob/main/spring-ai-agent-utils/docs/TaskTools.md#built-in-sub-agents&quot;&gt;reference documentation&lt;/a&gt; for detailed capabilities. Multiple subagents can run concurrently?for example, running &lt;code&gt;style-checker&lt;/code&gt;, &lt;code&gt;security-scanner&lt;/code&gt;, and &lt;code&gt;test-coverage&lt;/code&gt; simultaneously during code review.&lt;/p&gt;
+&lt;h2 id=&quot;getting-started&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#getting-started&quot; aria-label=&quot;getting started permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Getting Started&lt;/h2&gt;
+&lt;h3 id=&quot;1-add-the-dependency&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#1-add-the-dependency&quot; aria-label=&quot;1 add the dependency permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;1. Add the Dependency&lt;/h3&gt;
+&lt;pre&gt;&lt;code class=&quot;language-xml&quot;&gt;&amp;#x3C;dependency&gt;
+    &amp;#x3C;groupId&gt;org.springaicommunity&amp;#x3C;/groupId&gt;
+    &amp;#x3C;artifactId&gt;spring-ai-agent-utils&amp;#x3C;/artifactId&gt;
+    &amp;#x3C;version&gt;0.4.2&amp;#x3C;/version&gt;
+&amp;#x3C;/dependency&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&quot;2-configure-your-agent&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#2-configure-your-agent&quot; aria-label=&quot;2 configure your agent permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;2. Configure Your Agent&lt;/h3&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;import org.springaicommunity.agent.tools.task.TaskToolCallbackProvider;
+
+@Configuration
+public class AgentConfig {
+
+    @Bean
+    CommandLineRunner demo(ChatClient.Builder chatClientBuilder) {
+        return args -&gt; {
+            // Configure Task tools
+            var taskTools = TaskToolCallbackProvider.builder()
+                .chatClientBuilder(&quot;default&quot;, chatClientBuilder)
+                .subagentReferences(
+                    ClaudeSubagentReferences.fromRootDirectory(&quot;src/main/resources/agents&quot;))
+                .build();
+
+            // Build main chat client with Task tools
+            ChatClient chatClient = chatClientBuilder
+                .defaultToolCallbacks(taskTools)
+                .build();
+
+            // Use naturally - agent will delegate to subagents
+            String response = chatClient
+                .prompt(&quot;Explore the authentication module and explain how it works&quot;)
+                .call()
+                .content();
+        };
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The main agent automatically recognizes when to delegate to subagents based on their &lt;code&gt;description&lt;/code&gt; fields.&lt;/p&gt;
+&lt;h3 id=&quot;3-multi-model-routing-optional&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#3-multi-model-routing-optional&quot; aria-label=&quot;3 multi model routing optional permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;3. Multi-Model Routing (Optional)&lt;/h3&gt;
+&lt;p&gt;Route subagents to different models based on task complexity:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;var taskTools = TaskToolCallbackProvider.builder()
+    .chatClientBuilder(&quot;default&quot;, sonnetBuilder)   // Default model
+    .chatClientBuilder(&quot;haiku&quot;, haikuBuilder)      // Fast, cheap
+    .chatClientBuilder(&quot;opus&quot;, opusBuilder)        // Complex analysis
+    .build();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Subagents specify their preferred model in their definition, and the Task tool routes accordingly.&lt;/p&gt;
+&lt;h2 id=&quot;creating-custom-subagents&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#creating-custom-subagents&quot; aria-label=&quot;creating custom subagents permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Creating Custom Subagents&lt;/h2&gt;
+&lt;p&gt;Custom subagents are Markdown files with YAML frontmatter, typically stored in &lt;code&gt;.claude/agents/&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;project-root/
+戍式式 .claude/
+弛   戌式式 agents/
+弛       戍式式 code-reviewer.md
+弛       戌式式 test-runner.md
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4 id=&quot;subagent-file-format&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#subagent-file-format&quot; aria-label=&quot;subagent file format permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Subagent File Format&lt;/h4&gt;
+&lt;pre&gt;&lt;code class=&quot;language-markdown&quot;&gt;---
+name: code-reviewer
+description: Expert code reviewer. Use proactively after writing code.
+tools: Read, Grep, Glob
+disallowedTools: Edit, Write
+model: sonnet
+---
+
+You are a senior code reviewer with expertise in software quality.
+
+**When Invoked:**
+1. Run `git diff` to see recent changes
+2. Focus analysis on modified files
+3. Check surrounding code context
+
+**Review Checklist:**
+- Code clarity and readability
+- Proper naming conventions
+- Error handling
+- Security vulnerabilities
+
+**Output:** Clear, actionable feedback with file references.
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4 id=&quot;configuration-fields&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#configuration-fields&quot; aria-label=&quot;configuration fields permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Configuration Fields&lt;/h4&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Field&lt;/th&gt;
+&lt;th&gt;Required&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;name&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Yes&lt;/td&gt;
+&lt;td&gt;Unique identifier (lowercase with hyphens)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;description&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Yes&lt;/td&gt;
+&lt;td&gt;Natural language description of when to use this subagent&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;tools&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;No&lt;/td&gt;
+&lt;td&gt;Allowed tool names (inherits all if omitted)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;disallowedTools&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;No&lt;/td&gt;
+&lt;td&gt;Tools to explicitly deny&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;model&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;No&lt;/td&gt;
+&lt;td&gt;Model preference: &lt;code&gt;haiku&lt;/code&gt;, &lt;code&gt;sonnet&lt;/code&gt;, &lt;code&gt;opus&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;See the &lt;a href=&quot;https://github.com/spring-ai-community/spring-ai-agent-utils/blob/main/spring-ai-agent-utils/docs/TaskTools.md#creating-custom-sub-agents&quot;&gt;reference documentation&lt;/a&gt; for additional fields like &lt;code&gt;skills&lt;/code&gt; and &lt;code&gt;permissionMode&lt;/code&gt;.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Important:&lt;/strong&gt; Subagents cannot spawn their own subagents. Don&apos;t include &lt;code&gt;Task&lt;/code&gt; in a subagent&apos;s &lt;code&gt;tools&lt;/code&gt; list.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h4 id=&quot;loading-custom-subagents&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#loading-custom-subagents&quot; aria-label=&quot;loading custom subagents permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Loading Custom Subagents&lt;/h4&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;import org.springaicommunity.agent.tools.task.subagent.claude.ClaudeSubagentReferences;
+
+var taskTools = TaskToolCallbackProvider.builder()
+    .chatClientBuilder(&quot;default&quot;, chatClientBuilder)
+    .subagentReferences(
+        ClaudeSubagentReferences.fromRootDirectory(&quot;src/main/resources/agents&quot;)
+    )
+    .build();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;background-execution&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#background-execution&quot; aria-label=&quot;background execution permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Background Execution&lt;/h2&gt;
+&lt;p&gt;Long-running subagents can execute asynchronously.
+The main agent continues working while background subagents execute. Use &lt;code&gt;TaskOutputTool&lt;/code&gt; to retrieve results when needed. For persistent task storage across instances, see the &lt;a href=&quot;https://github.com/spring-ai-community/spring-ai-agent-utils/blob/main/spring-ai-agent-utils/docs/TaskTools.md#background-task-management&quot;&gt;TaskRepository documentation&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&quot;conclusion&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#conclusion&quot; aria-label=&quot;conclusion permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;The Task tool brings hierarchical subagent architectures to Spring AI, enabling context isolation, specialized instructions, and efficient multi-model routing. By delegating complex tasks to focused subagents, your main agent stays lean and responsive.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Next up:&lt;/strong&gt; In Part 5, we explore the &lt;strong&gt;Subagent Extension Framework&lt;/strong&gt;?a protocol-agnostic abstraction that lets you integrate remote agents via A2A, MCP, or custom protocols, extending Spring AI&apos;s portability beyond LLM providers to agent communication protocols.&lt;/p&gt;
+&lt;h2 id=&quot;resources&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#resources&quot; aria-label=&quot;resources permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Resources&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;GitHub Repository&lt;/strong&gt;: &lt;a href=&quot;https://github.com/spring-ai-community/spring-ai-agent-utils&quot;&gt;spring-ai-agent-utils&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;TaskTools Documentation&lt;/strong&gt;: &lt;a href=&quot;https://github.com/spring-ai-community/spring-ai-agent-utils/blob/main/spring-ai-agent-utils/docs/TaskTools.md&quot;&gt;TaskTools.md&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Example Project&lt;/strong&gt;: &lt;a href=&quot;https://github.com/spring-ai-community/spring-ai-agent-utils/tree/main/examples/subagent-demo&quot;&gt;subagent-demo&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&quot;related&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#related&quot; aria-label=&quot;related permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Related&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://platform.claude.com/docs/en/agent-sdk/subagents&quot;&gt;Claude Code Subagents&lt;/a&gt; - Original inspiration&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&quot;series-links&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#series-links&quot; aria-label=&quot;series links permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Series Links&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Part 1&lt;/strong&gt;: &lt;a href=&quot;https://spring.io/blog/2026/01/13/spring-ai-generic-agent-skills&quot;&gt;Agent Skills&lt;/a&gt; - Modular, reusable capabilities&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Part 2&lt;/strong&gt;: &lt;a href=&quot;https://spring.io/blog/2026/01/16/spring-ai-ask-user-question-tool&quot;&gt;AskUserQuestionTool&lt;/a&gt; - Interactive workflows&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Part 3&lt;/strong&gt;: &lt;a href=&quot;https://spring.io/blog/2026/01/20/spring-ai-agentic-patterns-3-todowrite/&quot;&gt;TodoWriteTool&lt;/a&gt; - Structured planning&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Part 4&lt;/strong&gt;: Task tool &amp;#x26; Subagents (this post)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Part 5&lt;/strong&gt;: Subagent Extension Framework (coming soon) - Protocol-agnostic agent orchestration&lt;/li&gt;
+&lt;/ul&gt;</content:encoded></item><item><title><![CDATA[This Week in Spring - January 27th, 2026 ]]></title><link>https://spring.io/blog/2026/01/27/this-week-in-spring-january-26th-2026</link><guid isPermaLink="true">https://spring.io/blog/2026/01/27/this-week-in-spring-january-26th-2026</guid><dc:creator><![CDATA[joshlong]]></dc:creator><pubDate>Tue, 27 Jan 2026 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;Hi, Spring fans! Welcome to another installment of &lt;em&gt;This Week in Spring&lt;/em&gt;! As I write this, I cannot believe we&apos;re nearly at the end of the month! Time sure flies.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://spring.io/blog/2026/01/23/spring-ai-2-0-0-M2-available-now&quot;&gt;Spring AI 2.0.0-M2 is available now&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://spring.io/blog/2026/01/23/spring-modulith-2-1-m-1-2-0-2-and-1-4-7-released&quot;&gt;Spring Modulith 2.1 M1, 2.0.2, and 1.4.7 released&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;In last week&apos;s installment of &lt;em&gt;A Bootiful Podcast&lt;/em&gt;, &lt;a href=&quot;https://spring.io/blog/2026/01/22/a-bootiful-podcast-dmitry-jemerov&quot;&gt;I talked to JetBrains legend Dmitry Jemerov&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://spring.io/blog/2026/01/22/spring-boot-3-5-10-available-now&quot;&gt;Spring Boot 3.5.10 is available now&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://spring.io/blog/2026/01/22/spring-boot-4-0-2-available-now&quot;&gt;Spring Boot 4.0.2 is available now&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://spring.io/blog/2026/01/22/spring-boot-4-1-0-M1-available-now&quot;&gt;Spring Boot 4.1.0-M1 is available now&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://spring.io/blog/2026/01/21/spring-batch-6-0-2-available-now&quot;&gt;Spring Batch 6.0.2 available now&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://spring.io/blog/2026/01/21/spring-integration-7-1-0-m1-released&quot;&gt;Spring Integration 7.1.0-M1 is available now&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Spring AI Agentic Patterns (pt. 3): &lt;a href=&quot;https://spring.io/blog/2026/01/20/spring-ai-agentic-patterns-3-todowrite&quot;&gt;Why Your AI Agent Forgets Tasks (and How to Fix It)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Have you heard of WiseMapping? It&apos;s a fully open-source mind-mapping software suite with a web and desktop client and a backend written in Spring Boot. &lt;a href=&quot;https://github.com/wisemapping/wisemapping-open-source/tree/develop&quot;&gt;Neat&lt;/a&gt;!&lt;/li&gt;
+&lt;li&gt;Are you looking for a way to marshal &lt;a href=&quot;https://github.com/jdereg/json-io&quot;&gt;TOON&lt;/a&gt;?&lt;/li&gt;
+&lt;li&gt;Have you seen &lt;a href=&quot;https://blog.jetbrains.com/idea/2026/01/spring-boot-debugging-now-remote/&quot;&gt;Spring Boot&apos;s remote debugging capability&lt;/a&gt;?&lt;/li&gt;
+&lt;li&gt;I really like this post called &lt;a href=&quot;https://newsletter.francofernando.com/p/software-design-principles-that-matter&quot;&gt;&lt;em&gt;Software Design Principles that Matter&lt;/em&gt;&lt;/a&gt; that introduces the open-closed principle, dependency injection, and inversion of control. Well worth a read, even if the post doesn&apos;t specifically mention Spring itself.&lt;/li&gt;
+&lt;li&gt;This is super exciting! Brian Goetz &lt;a href=&quot;https://mail.openjdk.org/pipermail/amber-spec-experts/2026-January/004307.html&quot;&gt;looks at the future of carrier types&lt;/a&gt; ? basically giving most of the goodness of records, but for regular classes.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;NullAway&lt;/code&gt;&apos;s support for JSpecify gets even better in 0.13.0: &lt;a href=&quot;https://www.linkedin.com/posts/deleuze_java-spring-activity-7419677525699776512-o-U-?rcm=ACoAAACXdIABb8VbfXttpb7WA9oliQsXOS5rEgw&quot;&gt;link&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Hey! Good news! Spring AI is listed among &lt;a href=&quot;https://www.linkedin.com/posts/tzolov_springai-activity-7420070501475332096-1yqf?rcm=ACoAAACXdIABb8VbfXttpb7WA9oliQsXOS5rEgw&quot;&gt;the adopters of AgentSkills.io&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;This is a very interesting point on &lt;a href=&quot;https://www.linkedin.com/posts/tzolov_springai-activity-7420070501475332096-1yqf?rcm=ACoAAACXdIABb8VbfXttpb7WA9oliQsXOS5rEgw&quot;&gt;how to effectively use Kotlin and JPA&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;There&apos;s a new documentary on &lt;a href=&quot;https://x.com/CultRepo/status/2013296267942633868?s=20&quot;&gt;IntelliJ IDEA&lt;/a&gt; coming, and the trailer is live. Check it out!&lt;/li&gt;
+&lt;/ul&gt;</content:encoded></item><item><title><![CDATA[Spring AI 2.0.0-M2 Available Now]]></title><link>https://spring.io/blog/2026/01/23/spring-ai-2-0-0-M2-available-now</link><guid isPermaLink="true">https://spring.io/blog/2026/01/23/spring-ai-2-0-0-M2-available-now</guid><dc:creator><![CDATA[markpollack]]></dc:creator><pubDate>Fri, 23 Jan 2026 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;On behalf of the Spring AI team, I&apos;m happy to announce that Spring AI &lt;code&gt;2.0.0-M2&lt;/code&gt; is now available from Maven Central.&lt;/p&gt;
 &lt;h2 id=&quot;release-summary&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#release-summary&quot; aria-label=&quot;release summary permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Release Summary&lt;/h2&gt;
 &lt;p&gt;This release includes &lt;a href=&quot;https://github.com/spring-projects/spring-ai/releases/tag/v2.0.0-M2&quot;&gt;94 changes&lt;/a&gt;: 36 improvements, 16 bug fixes, 38 documentation updates, and 4 dependency upgrades.&lt;/p&gt;
 &lt;p&gt;Thanks to all contributors.&lt;/p&gt;
@@ -55,9 +297,4 @@
 &lt;li&gt;Allow resetting the shift in &lt;code&gt;TimeMachine&lt;/code&gt; &lt;a href=&quot;https://github.com/spring-projects/spring-modulith/issues/1490&quot;&gt;#1490&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;Allow skipping all tests if no changes are detected &lt;a href=&quot;https://github.com/spring-projects/spring-modulith/issues/1438&quot;&gt;#1438&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;Find more details about the releases in the full changelog for &lt;a href=&quot;https://github.com/spring-projects/spring-modulith/releases/tag/2.1.0-M1&quot;&gt;2.1 M1&lt;/a&gt;, &lt;a href=&quot;https://github.com/spring-projects/spring-modulith/releases/tag/2.0.2&quot;&gt;2.0.2&lt;/a&gt;, and &lt;a href=&quot;https://github.com/spring-projects/spring-modulith/releases/tag/1.4.7&quot;&gt;1.4.7&lt;/a&gt;.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[A Bootiful Podcast: Jetbrains legend Dmitry Jemerov]]></title><link>https://spring.io/blog/2026/01/22/a-bootiful-podcast-dmitry-jemerov</link><guid isPermaLink="true">https://spring.io/blog/2026/01/22/a-bootiful-podcast-dmitry-jemerov</guid><dc:creator><![CDATA[joshlong]]></dc:creator><pubDate>Thu, 22 Jan 2026 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;Hi, Spring and IntelliJ IDEA fans! This week we celebrate 25 years of Jetbrains IntelliJ IDEA, and who better to talk to us about its evolution than Dmitry Jemerov, whose been a contributor and developer for the project since 2003!&lt;/p&gt;
-&lt;iframe title=&quot;Jetbrains legend Dmitry Jemerov&quot; allowtransparency=&quot;true&quot; height=&quot;300&quot; width=&quot;100%&quot; style=&quot;border: none; min-width: min(100%, 430px);height:300px;&quot; scrolling=&quot;no&quot; data-name=&quot;pb-iframe-player&quot; src=&quot;https://www.podbean.com/player-v2/?from=embed&amp;i=zvxqc-1a26bda-pb&amp;square=1&amp;share=1&amp;download=1&amp;fonts=Arial&amp;skin=1&amp;font-color=&amp;rtl=0&amp;logo_link=&amp;btn-skin=7&amp;size=300&quot; loading=&quot;lazy&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;</content:encoded></item><item><title><![CDATA[Spring Boot 3.5.10 available now]]></title><link>https://spring.io/blog/2026/01/22/spring-boot-3-5-10-available-now</link><guid isPermaLink="true">https://spring.io/blog/2026/01/22/spring-boot-3-5-10-available-now</guid><dc:creator><![CDATA[mhalbritter]]></dc:creator><pubDate>Thu, 22 Jan 2026 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;On behalf of the team and everyone who has contributed, I&apos;m happy to announce that Spring Boot &lt;code&gt;3.5.10&lt;/code&gt; has been released and is now available from Maven Central.&lt;/p&gt;
-&lt;p&gt;This release includes &lt;a href=&quot;https://github.com/spring-projects/spring-boot/releases/tag/v3.5.10&quot;&gt;29 bug fixes, documentation improvements, and dependency upgrades&lt;/a&gt;. Thanks to all those who have contributed with issue reports and pull requests.&lt;/p&gt;
-&lt;h3 id=&quot;how-can-you-help&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#how-can-you-help&quot; aria-label=&quot;how can you help permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;How can you help?&lt;/h3&gt;
-&lt;p&gt;If you&apos;re interested in helping out, check out the &lt;a href=&quot;https://github.com/spring-projects/spring-boot/labels/status%3A%20ideal-for-contribution&quot;&gt;&quot;ideal for contribution&quot; tag&lt;/a&gt; in the issue repository. If you have general questions, please ask on &lt;a href=&quot;https://stackoverflow.com&quot;&gt;stackoverflow.com&lt;/a&gt; using the &lt;a href=&quot;https://stackoverflow.com/tags/spring-boot&quot;&gt;&lt;code&gt;spring-boot&lt;/code&gt; tag&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;a href=&quot;https://spring.io/projects/spring-boot/&quot;&gt;Project Page&lt;/a&gt; | &lt;a href=&quot;https://github.com/spring-projects/spring-boot&quot;&gt;GitHub&lt;/a&gt; | &lt;a href=&quot;https://github.com/spring-projects/spring-boot/issues&quot;&gt;Issues&lt;/a&gt; | &lt;a href=&quot;https://docs.spring.io/spring-boot/3.5/&quot;&gt;Documentation&lt;/a&gt; | &lt;a href=&quot;https://stackoverflow.com/questions/tagged/spring-boot&quot;&gt;Stack Overflow&lt;/a&gt;&lt;/p&gt;</content:encoded></item></channel></rss>
+&lt;p&gt;Find more details about the releases in the full changelog for &lt;a href=&quot;https://github.com/spring-projects/spring-modulith/releases/tag/2.1.0-M1&quot;&gt;2.1 M1&lt;/a&gt;, &lt;a href=&quot;https://github.com/spring-projects/spring-modulith/releases/tag/2.0.2&quot;&gt;2.0.2&lt;/a&gt;, and &lt;a href=&quot;https://github.com/spring-projects/spring-modulith/releases/tag/1.4.7&quot;&gt;1.4.7&lt;/a&gt;.&lt;/p&gt;</content:encoded></item></channel></rss>
