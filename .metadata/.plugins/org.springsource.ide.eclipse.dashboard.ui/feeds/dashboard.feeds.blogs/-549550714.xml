@@ -1,4 +1,388 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Spring]]></title><description><![CDATA[Level up your Java code and explore what Spring can do for you.]]></description><link>https://spring.io</link><generator>GatsbyJS</generator><lastBuildDate>Wed, 28 Jan 2026 00:42:01 GMT</lastBuildDate><item><title><![CDATA[Spring AI Agentic Patterns (Part 4): Subagent Orchestration]]></title><link>https://spring.io/blog/2026/01/27/spring-ai-agentic-patterns-4-task-subagents</link><guid isPermaLink="true">https://spring.io/blog/2026/01/27/spring-ai-agentic-patterns-4-task-subagents</guid><dc:creator><![CDATA[tzolov]]></dc:creator><pubDate>Tue, 27 Jan 2026 00:00:00 GMT</pubDate><content:encoded>&lt;img style=&quot;display: block; margin: auto;&quot; align=&quot;right&quot; src=&quot;https://raw.githubusercontent.com/spring-io/spring-io-static/refs/heads/main/blog/tzolov/20260127/subagents.png&quot; width=&quot;200&quot;&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Spring]]></title><description><![CDATA[Level up your Java code and explore what Spring can do for you.]]></description><link>https://spring.io</link><generator>GatsbyJS</generator><lastBuildDate>Thu, 29 Jan 2026 00:47:13 GMT</lastBuildDate><item><title><![CDATA[Anthropic Agent Skills Support in Spring AI]]></title><link>https://spring.io/blog/2026/01/28/apring-ai-anthropic-agentic-skills</link><guid isPermaLink="true">https://spring.io/blog/2026/01/28/apring-ai-anthropic-agentic-skills</guid><dc:creator><![CDATA[sobychacko]]></dc:creator><pubDate>Wed, 28 Jan 2026 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;In this blog, we show how using Spring AI, we can integrate with Anthropic&apos;s Native Skills API for Cloud-Based Document Generation and Custom Skills.&lt;/p&gt;
+&lt;p&gt;Spring AI adds support for Anthropic&apos;s &lt;a href=&quot;https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview&quot;&gt;Agent Skills&lt;/a&gt; ? modular capabilities that let Claude generate actual files rather than text descriptions. With Skills enabled, Claude produces real Excel spreadsheets, PowerPoint presentations, Word documents, and PDFs that you can download and use directly.&lt;/p&gt;
+&lt;p&gt;This post covers how Spring AI integrates with Skills, including both pre-built Skills and Custom Skills for organization-specific document generation.&lt;/p&gt;
+&lt;h2 id=&quot;limitations&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#limitations&quot; aria-label=&quot;limitations permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Limitations&lt;/h2&gt;
+&lt;p&gt;This Skills implementation is specific to Anthropic&apos;s Claude models:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Not portable&lt;/strong&gt;: Skills require Anthropic&apos;s code execution and Files API infrastructure. They won&apos;t work with other providers (OpenAI, Gemini, etc.)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Anthropic-specific classes&lt;/strong&gt;: Uses &lt;code&gt;AnthropicChatOptions&lt;/code&gt;, &lt;code&gt;AnthropicSkill&lt;/code&gt;, &lt;code&gt;AnthropicSkillsResponseHelper&lt;/code&gt;?not Spring AI&apos;s generic interfaces&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Model restrictions&lt;/strong&gt;: Only Claude Sonnet 4, Sonnet 4.5, and Opus 4 support Skills&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;File expiration&lt;/strong&gt;: Generated files expire after 24 hours in Anthropic&apos;s Files API&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Beta feature&lt;/strong&gt;: Skills API requires beta headers and may evolve&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;when-to-use-anthropic-skills-vs-generic-agent-skills&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#when-to-use-anthropic-skills-vs-generic-agent-skills&quot; aria-label=&quot;when to use anthropic skills vs generic agent skills permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;When to Use Anthropic Skills vs. Generic Agent Skills&lt;/h2&gt;
+&lt;p&gt;Spring AI supports two different approaches to Agent Skills:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Use Anthropic&apos;s native Skills API when:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;You need the pre-built document generation skills (Excel, PowerPoint, Word, PDF)&lt;/li&gt;
+&lt;li&gt;You want skills to run in a sandboxed, secure cloud environment&lt;/li&gt;
+&lt;li&gt;You need workspace-scoped skills shared across your team&lt;/li&gt;
+&lt;li&gt;You&apos;re committed to using Claude models&lt;/li&gt;
+&lt;li&gt;You want Anthropic to manage the execution infrastructure&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Use Generic Agent Skills (&lt;a href=&quot;https://github.com/spring-ai-community/spring-ai-agent-utils&quot;&gt;spring-ai-agent-utils&lt;/a&gt;) when:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;You need skills that work across multiple LLM providers (OpenAI, Anthropic, Gemini, etc.)&lt;/li&gt;
+&lt;li&gt;Your skills need access to local resources, network, or custom packages&lt;/li&gt;
+&lt;li&gt;You want skills bundled and versioned with your application code&lt;/li&gt;
+&lt;li&gt;You need more control over the execution environment&lt;/li&gt;
+&lt;li&gt;Portability and avoiding vendor lock-in are priorities&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Can you use both?&lt;/strong&gt; Yes. You can use Anthropic&apos;s native Skills for document generation while using Generic Agent Skills for other portable capabilities in the same application. They serve different purposes and can complement each other.&lt;/p&gt;
+&lt;p&gt;See the &lt;a href=&quot;https://spring.io/blog/2026/01/13/spring-ai-generic-agent-skills&quot;&gt;Generic Agent Skills blog post&lt;/a&gt; for details on the portable approach.&lt;/p&gt;
+&lt;h2 id=&quot;why-use-spring-ai-for-skills&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#why-use-spring-ai-for-skills&quot; aria-label=&quot;why use spring ai for skills permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Why Use Spring AI for Skills&lt;/h2&gt;
+&lt;p&gt;Using Skills via the raw Anthropic API requires several manual steps:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Adding the &lt;code&gt;code_execution&lt;/code&gt; tool to every request (Skills require it)&lt;/li&gt;
+&lt;li&gt;Including three beta headers: &lt;code&gt;skills-2025-10-02&lt;/code&gt;, &lt;code&gt;code-execution-2025-08-25&lt;/code&gt;, &lt;code&gt;files-api-2025-04-14&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Parsing deeply nested JSON responses to find file IDs&lt;/li&gt;
+&lt;li&gt;Making separate HTTP calls to download generated files&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Spring AI handles all of this automatically. When you add a Skill to your request, Spring AI:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Auto-injects the code execution tool&lt;/strong&gt; - Skills run Python scripts server-side; we add the required tool configuration&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Manages beta headers&lt;/strong&gt; - All three required headers are added automatically and merge correctly with other features like prompt caching&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Provides type-safe enums&lt;/strong&gt; - &lt;code&gt;AnthropicSkill.XLSX&lt;/code&gt; instead of magic strings&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Validates at build time&lt;/strong&gt; - The 8-skill limit is enforced when you build your options, not when the API call fails&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Extracts file IDs&lt;/strong&gt; - &lt;code&gt;AnthropicSkillsResponseHelper&lt;/code&gt; recursively searches nested response structures&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Integrates Files API&lt;/strong&gt; - Download generated files with &lt;code&gt;anthropicApi.downloadFile()&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;pre-built-skills&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#pre-built-skills&quot; aria-label=&quot;pre built skills permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Pre-built Skills&lt;/h2&gt;
+&lt;p&gt;Anthropic provides four pre-built Skills:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Skill&lt;/th&gt;
+&lt;th&gt;Output&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;XLSX&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Excel spreadsheets with data, formulas, charts&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;PPTX&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;PowerPoint presentations with slides and layouts&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;DOCX&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Word documents with formatting&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;PDF&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;PDF reports and documents&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;When you enable a Skill, Claude handles both content decisions and technical implementation. The response contains a file ID pointing to the generated document in Anthropic&apos;s Files API.&lt;/p&gt;
+&lt;h3 id=&quot;basic-usage&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#basic-usage&quot; aria-label=&quot;basic usage permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Basic Usage&lt;/h3&gt;
+&lt;p&gt;Enable Skills through &lt;code&gt;AnthropicChatOptions&lt;/code&gt; using the unified &lt;code&gt;skill()&lt;/code&gt; method:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;ChatResponse response = chatModel.call(
+    new Prompt(
+        &quot;Create an Excel spreadsheet with Q1 2025 sales data. &quot; +
+        &quot;Include columns for Product, Units Sold, and Revenue.&quot;,
+        AnthropicChatOptions.builder()
+            .model(&quot;claude-sonnet-4-5&quot;)
+            .skill(AnthropicSkill.XLSX)
+            .maxTokens(4096)
+            .build()
+    )
+);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Behind the scenes, Spring AI adds the code execution tool and required beta headers. Claude processes the request, generates the spreadsheet, and returns a response containing a file ID.&lt;/p&gt;
+&lt;h3 id=&quot;multiple-skills&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#multiple-skills&quot; aria-label=&quot;multiple skills permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Multiple Skills&lt;/h3&gt;
+&lt;p&gt;Enable multiple Skills for complex workflows:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;AnthropicChatOptions.builder()
+    .model(&quot;claude-sonnet-4-5&quot;)
+    .skill(AnthropicSkill.XLSX)
+    .skill(AnthropicSkill.PPTX)
+    .maxTokens(8192)
+    .build()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Or use the &lt;code&gt;skills()&lt;/code&gt; convenience method:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;AnthropicChatOptions.builder()
+    .model(&quot;claude-sonnet-4-5&quot;)
+    .skills(&quot;xlsx&quot;, &quot;pptx&quot;)
+    .maxTokens(8192)
+    .build()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Claude decides which format suits each part of the output. Maximum 8 Skills per request?enforced at build time with a clear error message.&lt;/p&gt;
+&lt;h3 id=&quot;chatclient-api&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#chatclient-api&quot; aria-label=&quot;chatclient api permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;ChatClient API&lt;/h3&gt;
+&lt;p&gt;Skills work with Spring AI&apos;s fluent ChatClient:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;String content = ChatClient.create(chatModel)
+    .prompt()
+    .user(&quot;Create a Word document with our product roadmap&quot;)
+    .options(AnthropicChatOptions.builder()
+        .model(&quot;claude-sonnet-4-5&quot;)
+        .skill(AnthropicSkill.DOCX)
+        .maxTokens(4096)
+        .build())
+    .call()
+    .content();
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;downloading-generated-files&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#downloading-generated-files&quot; aria-label=&quot;downloading generated files permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Downloading Generated Files&lt;/h2&gt;
+&lt;p&gt;Generated files live in Anthropic&apos;s Files API for 24 hours. We provide &lt;code&gt;AnthropicSkillsResponseHelper&lt;/code&gt; to extract file IDs and &lt;code&gt;AnthropicApi&lt;/code&gt; for file operations.&lt;/p&gt;
+&lt;p&gt;When Claude generates files, the file IDs are embedded in a nested response structure?sometimes 4 levels deep. &lt;code&gt;AnthropicSkillsResponseHelper&lt;/code&gt; handles this with a recursive search that finds file IDs at any depth.&lt;/p&gt;
+&lt;h3 id=&quot;extract-and-download&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#extract-and-download&quot; aria-label=&quot;extract and download permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Extract and Download&lt;/h3&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;List&amp;#x3C;String&gt; fileIds = AnthropicSkillsResponseHelper.extractFileIds(response);
+
+for (String fileId : fileIds) {
+    FileMetadata metadata = anthropicApi.getFileMetadata(fileId);
+    byte[] content = anthropicApi.downloadFile(fileId);
+
+    Files.write(Path.of(metadata.filename()), content);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&quot;batch-download&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#batch-download&quot; aria-label=&quot;batch download permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Batch Download&lt;/h3&gt;
+&lt;p&gt;For responses with multiple files:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;Path targetDir = Path.of(&quot;generated-docs&quot;);
+List&amp;#x3C;Path&gt; savedFiles = AnthropicSkillsResponseHelper.downloadAllFiles(
+    response, anthropicApi, targetDir
+);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;custom-skills&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#custom-skills&quot; aria-label=&quot;custom skills permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Custom Skills&lt;/h2&gt;
+&lt;p&gt;Custom Skills let you package your own instructions into reusable modules that Claude applies during document generation:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Corporate branding (headers, footers, watermarks, logos)&lt;/li&gt;
+&lt;li&gt;Compliance requirements (disclaimers, confidentiality notices)&lt;/li&gt;
+&lt;li&gt;Document templates (standard structures, formatting rules)&lt;/li&gt;
+&lt;li&gt;Domain expertise (industry terminology, specialized calculations)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Custom Skills are &lt;code&gt;SKILL.md&lt;/code&gt; files uploaded to your Anthropic workspace. Once uploaded, they&apos;re available to all workspace members and can be combined with any pre-built Skill.&lt;/p&gt;
+&lt;h3 id=&quot;skill-structure&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#skill-structure&quot; aria-label=&quot;skill structure permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Skill Structure&lt;/h3&gt;
+&lt;p&gt;Every Skill requires a &lt;code&gt;SKILL.md&lt;/code&gt; file with YAML frontmatter:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-markdown&quot;&gt;---
+name: document-watermark
+description: MANDATORY branding that MUST be added to ALL generated documents -
+  adds ACME CORPORATION header and Document Forge footer
+---
+
+# Document Watermark
+
+## Header Requirement
+Add &quot;ACME CORPORATION&quot; prominently at the top of every document:
+- **Excel**: Cell A1, bold, merged across data columns
+- **PowerPoint**: First slide header, all slides footer
+- **Word/PDF**: Document header section
+
+## Footer Requirement
+Add &quot;Generated by Document Forge | Confidential&quot; at the bottom:
+- **Excel**: Row below last data row
+- **PowerPoint**: Footer on all slides
+- **Word/PDF**: Document footer section
+
+## Verification
+Before completing any document:
+1. Confirm ACME CORPORATION header is present
+2. Verify Document Forge footer appears
+3. Add any missing elements before saving
+
+This branding is MANDATORY for compliance purposes.
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;code&gt;description&lt;/code&gt; field tells Claude when to apply the Skill. Be explicit?words like &quot;MANDATORY&quot; and &quot;MUST&quot; help ensure consistent application.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Field&lt;/th&gt;
+&lt;th&gt;Requirement&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;name&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Max 64 chars, lowercase letters, numbers, hyphens only&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;description&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Max 1024 chars, must be non-empty&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&quot;uploading-custom-skills&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#uploading-custom-skills&quot; aria-label=&quot;uploading custom skills permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Uploading Custom Skills&lt;/h3&gt;
+&lt;p&gt;Upload Skills using the Anthropic API:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;curl -X POST &quot;https://api.anthropic.com/v1/skills&quot; \
+  -H &quot;x-api-key: $ANTHROPIC_API_KEY&quot; \
+  -H &quot;anthropic-version: 2023-06-01&quot; \
+  -H &quot;anthropic-beta: skills-2025-10-02&quot; \
+  -F &quot;display_title=Document Watermark&quot; \
+  -F &quot;files[]=@SKILL.md;filename=document-watermark/SKILL.md&quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Note the format: &lt;code&gt;files[]=&lt;/code&gt; with square brackets, and &lt;code&gt;filename&lt;/code&gt; must include a directory matching the &lt;code&gt;name&lt;/code&gt; field in your YAML frontmatter.&lt;/p&gt;
+&lt;p&gt;Response:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-json&quot;&gt;{
+  &quot;id&quot;: &quot;skill_01WatermarkXyz123&quot;,
+  &quot;display_title&quot;: &quot;Document Watermark&quot;,
+  &quot;source&quot;: &quot;custom&quot;,
+  &quot;latest_version&quot;: &quot;1765845644409101&quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;code&gt;id&lt;/code&gt; is what you use in Spring AI.&lt;/p&gt;
+&lt;h3 id=&quot;using-custom-skills&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#using-custom-skills&quot; aria-label=&quot;using custom skills permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Using Custom Skills&lt;/h3&gt;
+&lt;p&gt;Reference Custom Skills by ID using the unified &lt;code&gt;skill()&lt;/code&gt; method:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;ChatResponse response = chatModel.call(
+    new Prompt(
+        &quot;Create a quarterly sales report with revenue, expenses, and profit by month&quot;,
+        AnthropicChatOptions.builder()
+            .model(&quot;claude-sonnet-4-5&quot;)
+            .skill(AnthropicSkill.XLSX)
+            .skill(&quot;skill_01WatermarkXyz123&quot;)
+            .maxTokens(8192)
+            .build()
+    )
+);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Claude combines both Skills?XLSX provides spreadsheet generation, the watermark skill adds your corporate branding.&lt;/p&gt;
+&lt;h3 id=&quot;version-pinning&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#version-pinning&quot; aria-label=&quot;version pinning permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Version Pinning&lt;/h3&gt;
+&lt;p&gt;For production deployments, pin Custom Skills to specific versions:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;AnthropicChatOptions.builder()
+    .model(&quot;claude-sonnet-4-5&quot;)
+    .skill(AnthropicSkill.XLSX)
+    .skill(&quot;skill_01WatermarkXyz123&quot;)                  // Latest version
+    .skill(&quot;skill_02LegalCompliance&quot;, &quot;1765845644409101&quot;)  // Pinned version
+    .maxTokens(8192)
+    .build()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Use pinned versions in production, &lt;code&gt;latest&lt;/code&gt; (the default) during development.&lt;/p&gt;
+&lt;h2 id=&quot;example-document-generation-service&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#example-document-generation-service&quot; aria-label=&quot;example document generation service permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Example: Document Generation Service&lt;/h2&gt;
+&lt;p&gt;Here&apos;s a complete service that combines pre-built and Custom Skills:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-java&quot;&gt;@Service
+public class DocumentGenerationService {
+
+    private final AnthropicChatModel chatModel;
+    private final AnthropicApi anthropicApi;
+
+    @Value(&quot;${app.custom-skill-id:}&quot;)
+    private String watermarkSkillId;
+
+    public DocumentGenerationService(AnthropicChatModel chatModel,
+                                      AnthropicApi anthropicApi) {
+        this.chatModel = chatModel;
+        this.anthropicApi = anthropicApi;
+    }
+
+    public byte[] generate(String prompt, AnthropicSkill documentType,
+                           boolean applyBranding) {
+
+        AnthropicChatOptions.Builder builder = AnthropicChatOptions.builder()
+            .model(&quot;claude-sonnet-4-5&quot;)
+            .skill(documentType)
+            .maxTokens(8192);
+
+        if (applyBranding &amp;#x26;&amp;#x26; StringUtils.hasText(watermarkSkillId)) {
+            builder.skill(watermarkSkillId);
+        }
+
+        ChatResponse response = chatModel.call(
+            new Prompt(prompt, builder.build())
+        );
+
+        List&amp;#x3C;String&gt; fileIds = AnthropicSkillsResponseHelper.extractFileIds(response);
+        if (fileIds.isEmpty()) {
+            throw new DocumentGenerationException(&quot;No file generated&quot;);
+        }
+
+        return anthropicApi.downloadFile(fileIds.get(0));
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This pattern makes Custom Skills optional?the application works with pre-built Skills alone when no skill ID is configured.&lt;/p&gt;
+&lt;h2 id=&quot;tips-for-custom-skills&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#tips-for-custom-skills&quot; aria-label=&quot;tips for custom skills permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Tips for Custom Skills&lt;/h2&gt;
+&lt;p&gt;A few things we noticed building the watermark skill:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Emphatic language helped.&lt;/strong&gt; When we wanted Claude to consistently add the header and footer, phrases like &quot;MANDATORY&quot; and &quot;MUST&quot; made a difference. Your mileage may vary depending on what your skill does.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Format-specific instructions.&lt;/strong&gt; Since custom skills can be combined with any pre-built skill, we included separate instructions for Excel, PowerPoint, Word, and PDF.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Verification checklists.&lt;/strong&gt; Adding a section asking Claude to verify elements were present before completing the document caught cases where instructions might otherwise be missed.&lt;/p&gt;
+&lt;h2 id=&quot;getting-started&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#getting-started&quot; aria-label=&quot;getting started permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Getting Started&lt;/h2&gt;
+&lt;p&gt;Add the Spring AI Anthropic starter:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-xml&quot;&gt;&amp;#x3C;dependency&gt;
+    &amp;#x3C;groupId&gt;org.springframework.ai&amp;#x3C;/groupId&gt;
+    &amp;#x3C;artifactId&gt;spring-ai-starter-model-anthropic&amp;#x3C;/artifactId&gt;
+&amp;#x3C;/dependency&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Configure your API key:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-properties&quot;&gt;spring.ai.anthropic.api-key=${ANTHROPIC_API_KEY}
+spring.ai.anthropic.chat.options.model=claude-sonnet-4-5
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&quot;quick-reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#quick-reference&quot; aria-label=&quot;quick reference permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Quick Reference&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Feature&lt;/th&gt;
+&lt;th&gt;Value&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Supported models&lt;/td&gt;
+&lt;td&gt;Claude Sonnet 4, Sonnet 4.5, Opus 4&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Skills per request&lt;/td&gt;
+&lt;td&gt;Maximum 8&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;File expiration&lt;/td&gt;
+&lt;td&gt;24 hours&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Recommended max-tokens&lt;/td&gt;
+&lt;td&gt;4096+ for complex documents&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Method&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;.skill(AnthropicSkill)&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Add pre-built Skill (XLSX, PPTX, DOCX, PDF)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;.skill(String)&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Add skill by ID or name (auto-detects pre-built vs custom)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;.skill(String, String)&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Add skill with pinned version&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;.skills(String...)&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Add multiple skills at once&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;.skills(List&amp;#x3C;String&gt;)&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Add multiple skills from a list&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&quot;sample-application&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#sample-application&quot; aria-label=&quot;sample application permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Sample Application&lt;/h2&gt;
+&lt;p&gt;We&apos;ve created a &lt;a href=&quot;https://github.com/spring-projects/spring-ai-examples/tree/main/misc/claude-skills-demo/document-forge&quot;&gt;sample application&lt;/a&gt; that lets you exercise all the Anthropic Skills features covered in this post.&lt;/p&gt;
+&lt;p&gt;The application provides a web interface where you can:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Select a document type&lt;/strong&gt; (Excel, PowerPoint, Word, or PDF) and enter a natural language prompt describing what you want&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Upload source files&lt;/strong&gt; to transform existing content ? for example, convert a text file into a formatted spreadsheet or turn meeting notes into a presentation&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Enable custom branding&lt;/strong&gt; to see how Custom Skills add headers, footers, and watermarks to generated documents&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Download the results&lt;/strong&gt; directly through the Files API integration&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Under the hood, the application demonstrates the key patterns from this post: configuring Skills via &lt;code&gt;AnthropicChatOptions&lt;/code&gt;, extracting file IDs with &lt;code&gt;AnthropicSkillsResponseHelper&lt;/code&gt;, and downloading generated files through &lt;code&gt;AnthropicApi&lt;/code&gt;. It also shows async generation for longer-running requests like presentations.&lt;/p&gt;
+&lt;h2 id=&quot;related-generic-agent-skills-in-spring-ai&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#related-generic-agent-skills-in-spring-ai&quot; aria-label=&quot;related generic agent skills in spring ai permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Related: Generic Agent Skills in Spring AI&lt;/h2&gt;
+&lt;p&gt;This post covers Anthropic&apos;s document generation Skills?a provider-specific feature that produces real files (Excel, PowerPoint, Word, PDF). However, Spring AI also provides &lt;strong&gt;generic Agent Skills&lt;/strong&gt; that work across any LLM provider.&lt;/p&gt;
+&lt;p&gt;The &lt;a href=&quot;https://spring.io/blog/2026/01/13/spring-ai-generic-agent-skills/&quot;&gt;Spring AI Agentic Patterns&lt;/a&gt; blog series covers these portable patterns:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;a href=&quot;https://spring.io/blog/2026/01/13/spring-ai-generic-agent-skills/&quot;&gt;Agent Skills&lt;/a&gt;&lt;/strong&gt;: Modular folders of instructions and resources that run locally in your environment?define once, use with OpenAI, Anthropic, Gemini, or any supported model&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;a href=&quot;https://spring.io/blog/2026/01/16/spring-ai-ask-user-question-tool/&quot;&gt;AskUserQuestionTool&lt;/a&gt;&lt;/strong&gt;: Enables agents to ask clarifying questions during execution, gathering requirements interactively before acting&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;a href=&quot;https://spring.io/blog/2026/01/20/spring-ai-agentic-patterns-3-todowrite/&quot;&gt;TodoWriteTool&lt;/a&gt;&lt;/strong&gt;: Transparent, trackable task management for multi-step agent workflows&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;a href=&quot;https://spring.io/blog/2026/01/27/spring-ai-agentic-patterns-4-task-subagents/&quot;&gt;Task Subagents&lt;/a&gt;&lt;/strong&gt;: Spawn specialized subagents for complex, multi-step tasks&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;These generic patterns live in the &lt;a href=&quot;https://github.com/spring-ai-community/spring-ai-agent-utils&quot;&gt;spring-ai-agent-utils&lt;/a&gt; library and complement the Anthropic-specific Skills covered here. Use Anthropic Skills when you need actual document file generation; use generic Agent Skills when you need portable, LLM-agnostic agent capabilities.&lt;/p&gt;
+&lt;h2 id=&quot;conclusion&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#conclusion&quot; aria-label=&quot;conclusion permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;Spring AI provides a streamlined integration with Anthropic&apos;s Agent Skills API. The unified &lt;code&gt;skill()&lt;/code&gt; method works for both pre-built and custom skills, and handles all the complexity of code execution tools, beta headers, and file extraction automatically.&lt;/p&gt;
+&lt;p&gt;For complete API documentation, see the &lt;a href=&quot;https://docs.spring.io/spring-ai/reference/api/chat/anthropic-chat.html#_skills&quot;&gt;Spring AI Anthropic Chat reference&lt;/a&gt;. For Custom Skill authoring guidance, see Anthropic&apos;s &lt;a href=&quot;https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview&quot;&gt;Skills documentation&lt;/a&gt; and &lt;a href=&quot;https://github.com/anthropics/claude-cookbooks/tree/main/skills&quot;&gt;Skills Cookbook&lt;/a&gt;.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Spring AI Agentic Patterns (Part 4): Subagent Orchestration]]></title><link>https://spring.io/blog/2026/01/27/spring-ai-agentic-patterns-4-task-subagents</link><guid isPermaLink="true">https://spring.io/blog/2026/01/27/spring-ai-agentic-patterns-4-task-subagents</guid><dc:creator><![CDATA[tzolov]]></dc:creator><pubDate>Tue, 27 Jan 2026 00:00:00 GMT</pubDate><content:encoded>&lt;img style=&quot;display: block; margin: auto;&quot; align=&quot;right&quot; src=&quot;https://raw.githubusercontent.com/spring-io/spring-io-static/refs/heads/main/blog/tzolov/20260127/subagents.png&quot; width=&quot;200&quot;&gt;
 &lt;p&gt;Instead of one generalist agent doing everything, delegate to specialized agents. This keeps context windows focused?preventing the clutter that degrades performance.&lt;/p&gt;
 &lt;p&gt;&lt;a href=&quot;https://github.com/spring-ai-community/spring-ai-agent-utils/blob/main/spring-ai-agent-utils/docs/TaskTools.md&quot;&gt;Task tool&lt;/a&gt;, part of the &lt;a href=&quot;https://github.com/spring-ai-community/spring-ai-agent-utils&quot;&gt;spring-ai-agent-utils&lt;/a&gt; toolkit, is a &lt;strong&gt;portable, model-agnostic&lt;/strong&gt; Spring AI implementation inspired by &lt;a href=&quot;https://platform.claude.com/docs/en/agent-sdk/subagents&quot;&gt;Claude Code&apos;s subagents&lt;/a&gt;. It enables hierarchical agent architectures where specialized subagents handle focused tasks in &lt;strong&gt;dedicated context windows&lt;/strong&gt;, returning only essential results to the parent. Beyond Claude&apos;s markdown-based format, the architecture is extensible?supporting &lt;a href=&quot;https://google.github.io/A2A/&quot;&gt;A2A&lt;/a&gt; and other agentic protocols for heterogeneous agent orchestration (more information will be provided in Part 5).&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;This is Part 4 of our Spring AI Agentic Patterns series.&lt;/strong&gt; We&apos;ve covered &lt;a href=&quot;https://spring.io/blog/2026/01/13/spring-ai-generic-agent-skills&quot;&gt;Agent Skills&lt;/a&gt;, &lt;a href=&quot;https://spring.io/blog/2026/01/16/spring-ai-ask-user-question-tool&quot;&gt;AskUserQuestionTool&lt;/a&gt;, and &lt;a href=&quot;https://spring.io/blog/2026/01/20/spring-ai-agentic-patterns-3-todowrite/&quot;&gt;TodoWriteTool&lt;/a&gt;. Now we explore hierarchical subagents.&lt;/p&gt;
@@ -292,9 +676,4 @@ The main agent continues working while background subagents execute. Use &lt;cod
 &lt;li&gt;&lt;a href=&quot;https://github.com/quaff&quot;&gt;Yanming Zhou (@quaff)&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&quot;https://github.com/Yokior&quot;&gt;Yokior (@Yokior)&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&quot;https://github.com/ybezsonov&quot;&gt;Yuriy Bezsonov (@ybezsonov)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content:encoded></item><item><title><![CDATA[Spring Modulith 2.1 M1, 2.0.2, and 1.4.7 released]]></title><link>https://spring.io/blog/2026/01/23/spring-modulith-2-1-m-1-2-0-2-and-1-4-7-released</link><guid isPermaLink="true">https://spring.io/blog/2026/01/23/spring-modulith-2-1-m-1-2-0-2-and-1-4-7-released</guid><dc:creator><![CDATA[odrotbohm]]></dc:creator><pubDate>Fri, 23 Jan 2026 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;On behalf of the communit I am happy to announce the availablity of Spring Modulith 2.1 M1, 2.0.2, and 1.4.7. The bug fix releases primarily ship the usual depenency upgrades. The first milestone of 2.1 upgrades to Boot 4.1&apos;s first milestone and includes a few minor additions accumulated after the 2.0 GA release.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Allow resetting the shift in &lt;code&gt;TimeMachine&lt;/code&gt; &lt;a href=&quot;https://github.com/spring-projects/spring-modulith/issues/1490&quot;&gt;#1490&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Allow skipping all tests if no changes are detected &lt;a href=&quot;https://github.com/spring-projects/spring-modulith/issues/1438&quot;&gt;#1438&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Find more details about the releases in the full changelog for &lt;a href=&quot;https://github.com/spring-projects/spring-modulith/releases/tag/2.1.0-M1&quot;&gt;2.1 M1&lt;/a&gt;, &lt;a href=&quot;https://github.com/spring-projects/spring-modulith/releases/tag/2.0.2&quot;&gt;2.0.2&lt;/a&gt;, and &lt;a href=&quot;https://github.com/spring-projects/spring-modulith/releases/tag/1.4.7&quot;&gt;1.4.7&lt;/a&gt;.&lt;/p&gt;</content:encoded></item></channel></rss>
+&lt;/ul&gt;</content:encoded></item></channel></rss>

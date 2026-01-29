@@ -17,7 +17,7 @@ public class BoardServiceClient {
 		// vo.setSeq(100);
 		vo.setTitle("활빈당");
 		vo.setWriter("홍길동");
-		vo.setContent("나는 조선의 ............");
+		vo.setContent("Mybatis 두번째 방법 연동처리");
 		boardService.insertBoard(vo);
 		
 		List<BoardVO> boardList = boardService.getBoardList(vo);
